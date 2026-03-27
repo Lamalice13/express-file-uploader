@@ -1,0 +1,10 @@
+generator client {
+  provider        = "prisma-client-js"
+  output          = "../generated/prisma"
+  previewFeatures = ["typedSql"]
+}
+
+datasource db {
+  // vsc error is a bug, this is the correct syntax.
+  provider = "postgresql"
+}
