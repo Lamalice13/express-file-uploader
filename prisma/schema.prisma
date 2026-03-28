@@ -16,3 +16,16 @@ model Session {
   data      String
   expiresAt DateTime
 }
+
+model User {
+  id       String @id
+  email    String @unique
+  username String
+  files    File[]
+}
+
+model File {
+  id     String  @id
+  User   User?   @relation(fields: [userId], references: [id])
+  userId String?
+}
