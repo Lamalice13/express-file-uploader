@@ -1,6 +1,6 @@
 import passport from "passport";
 import passportLocal from "passport-local";
-import { prisma } from "../lib/prisma";
+import { prisma } from "../lib/prisma.js";
 import bcrypt from "bcryptjs";
 
 const LocalStrategy = passportLocal.Strategy;
