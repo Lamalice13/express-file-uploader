@@ -8,3 +8,11 @@ datasource db {
   // vsc error is a bug, this is the correct syntax.
   provider = "postgresql"
 }
+
+// Session
+model Session {
+  id        String   @id
+  sid       String   @unique
+  data      String
+  expiresAt DateTime
+}
