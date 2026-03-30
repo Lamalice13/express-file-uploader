@@ -6,12 +6,14 @@ import passport from "passport";
 import expressSession from "express-session";
 import { PrismaSessionStore } from "@quixo3/prisma-session-store";
 import { prisma } from "./lib/prisma.js";
+import uploadMiddleware from "./middlewares/multer.js";
 
 const app = express();
 
 // CONFIG
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(express.static("public"));
 app.set("views", "./views");
 app.set("view engine", "ejs");
 
@@ -28,7 +30,7 @@ app.use(
       dbRecordIdIsSessionId: true,
       dbRecordIdFunction: undefined,
     }),
-  })
+  }),
 );
 
 // PASSPORT
@@ -84,9 +86,80 @@ app
     }
   });
 
+// Index
+app
+  .route("/")
+  .get(async (req, res) => {
+    if (!req.isAuthenticated()) return res.render("login");
+    try {
+      const folders = await prisma.folder.findMany({
+        where: {
+          userId: req.user.id,
+        },
+      });
+      res.render("index", {
+        folders,
+      });
+    } catch (err) {
+      next(err);
+    }
+  })
+  .post(uploadMiddleware, async (req, res, next) => {
+    const folders = [].concat(req.body.folders);
+    console.log(req.files);
+    if (req.files.length > 0) {
+      try {
+        await Promise.all(
+          req.files.map((file) =>
+            prisma.file.create({
+              data: {
+                bytes: file.size,
+                name: file.filename,
+                folders: {
+                  connect: folders.map((id) => ({ id: parseInt(id) })),
+                },
+              },
+            }),
+          ),
+        );
+      } catch (err) {
+        next(err);
+      }
+      return res.redirect("/");
+    } else {
+      return res.send("You need to put a file!");
+    }
+  });
+
+// Folders
+app.post("/create/folder", async (req, res, next) => {
+  try {
+    await prisma.folder.create({
+      data: {
+        name: req.body.folder_name,
+        userId: req.user.id,
+      },
+    });
+    return res.redirect("/");
+  } catch (err) {
+    next(err);
+  }
+});
+
+// ERROR EXPRESS MIDDLEWARE
+app.use((err, req, res, next) => {
+  console.error("Express error", err);
+  res.status(500).send(err);
+});
+
 // PORT
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, (e) => {
   if (e) return console.log(e);
   console.log(`Server running on ${PORT}`);
 });
+
+// ROUTE GET FOLDER
+// ADD DELETE CASCADE FOLDER > FILE IN PRISMA SCHEMA
+// ROUTE DELETE FOLDER + ALERT JS
+// QUAND ON AJOUTER UN INPUT LES FICHIERS CHARGÉES SE RESET

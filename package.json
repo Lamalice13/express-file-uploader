@@ -11,6 +11,7 @@
   "devDependencies": {
     "@prisma/adapter-pg": "^7.5.0",
     "@prisma/client": "^7.5.0",
+    "@quixo3/prisma-session-store": "^3.1.19",
     "bcryptjs": "^3.0.3",
     "connect-pg-simple": "^10.0.0",
     "dotenv": "^17.3.1",
@@ -21,7 +22,9 @@
     "passport": "^0.7.0",
     "passport-local": "^1.0.0",
     "pg": "^8.20.0",
-    "prisma": "^7.5.0",
-    "@quixo3/prisma-session-store": "^3.1.19"
+    "prisma": "^7.5.0"
+  },
+  "dependencies": {
+    "multer": "^2.1.1"
   }
 }

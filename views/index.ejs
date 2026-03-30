@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Upload file</title>
+</head>
+
+<body>
+  <h1 style="margin: 0;">Drop your files</h1>
+
+  <% if(locals.folders && locals.folders.length > 0) { %>
+
+  <form id="upload-form" action="/" method="post" enctype="multipart/form-data">
+    <br>
+    <img src="/icons/plus.svg" id="plus-icon" alt="plus" width="25" style="cursor: pointer;">
+    <div id="inputs" style="display: flex; flex-direction: column; gap: 10px; ">
+      <input type="file" name="file1" id="file" />
+    </div>
+    <br>
+    <fieldset>
+      <legend>Select the folder(s) you want to put your file(s) into</legend>
+      <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+        <% folders.forEach(f => { %>
+        <div style="display: flex; gap: 1rem;">
+          <label for="<%= f.id %>"><%= f.name %></label>
+          <input type="checkbox" name="folders" value="<%= f.id %>" id="<%= f.id %>">
+          <a href="/folder/<%= f.id %>">🔍</a>
+        </div>
+        <% }) %>
+      </div>
+  </form>
+  <form action="/create/folder" method="post">
+    <label for="folder_name">Add a folder</label>
+    <input type="text" name="folder_name" id="folder_name">
+    <button type="submit">Create folder</button>
+  </form>
+  </fieldset>
+  <button form="upload-form" type="submit" style="display: block; margin-top: 2%;">Submit</button>
+
+
+  <% } else { %>
+  <p>You'll need first to create a folder!</p>
+  <form action="/create/folder" method="post">
+    <label for="folder_name">Folder's name</label>
+    <input type="text" name="folder_name" id="folder_name">
+    <button type="submit">Create folder</button>
+  </form>
+  <% } %>
+
+  <style>
+    input[type="file"]::file-selector-button {
+      cursor: pointer;
+    }
+  </style>
+
+  <script>
+    const icon = document.getElementById("plus-icon");
+    const div = document.getElementById("inputs");
+    let count = 2;
+
+    icon.addEventListener("click", () => {
+      div.innerHTML += `<input type="file" name="file${count}" id="file${count++}">`
+    })
+  </script>
+
+</body>
+
+</html>
