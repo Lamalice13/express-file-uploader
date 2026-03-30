@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Folder</title>
+</head>
+
+<body>
+  <% if(locals.files) {%>
+  <div>
+    <% files.forEach(file => { %>
+    <p><%= file.name%></p>
+    <p><%= file.bytes %></p>
+    <% }) %>
+  </div>
+  <% } %>
+  <a href="/">Go back</a>
+</body>
+
+</html>

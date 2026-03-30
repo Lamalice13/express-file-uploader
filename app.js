@@ -131,7 +131,21 @@ app
     }
   });
 
-// Folders
+// See folder details
+app.get("/folder/:id", async (req, res) => {
+  const files = await prisma.file.findMany({
+    where: {
+      folders: {
+        some: { id: parseInt(req.params.id) },
+      },
+    },
+  });
+  res.render("folder", {
+    files,
+  });
+});
+
+// Create folder
 app.post("/create/folder", async (req, res, next) => {
   try {
     await prisma.folder.create({
