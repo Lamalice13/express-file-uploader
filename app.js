@@ -6,7 +6,7 @@ import passport from "passport";
 import expressSession from "express-session";
 import { PrismaSessionStore } from "@quixo3/prisma-session-store";
 import { prisma } from "./lib/prisma.js";
-import uploadMiddleware from "./middlewares/multer.js";
+import uploadMiddleware from "./middlewares/cloudinary-multer.js";
 
 const app = express();
 
@@ -86,7 +86,7 @@ app
     }
   });
 
-// render + upload files
+// get + upload files
 app
   .route("/")
   .get(async (req, res) => {
@@ -106,7 +106,6 @@ app
   })
   .post(uploadMiddleware, async (req, res, next) => {
     const folders = [].concat(req.body.folders);
-
     console.log(req.files);
     if (req.files.length > 0) {
       try {
