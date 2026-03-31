@@ -106,7 +106,7 @@ app
   })
   .post(uploadMiddleware, async (req, res, next) => {
     const folders = [].concat(req.body.folders);
-    console.log(req.files);
+
     if (req.files.length > 0) {
       try {
         await Promise.all(
@@ -194,6 +194,20 @@ app.post("/create/folder", async (req, res, next) => {
     return res.redirect("/");
   } catch (err) {
     next(err);
+  }
+});
+
+// PATCH NAME FOLDER
+app.patch("/update/folder/:id", async (req, res, next) => {
+  try {
+    await prisma.folder.update({
+      where: { id: parseInt(req.params.id) },
+      data: {
+        name: req.body.folderName,
+      },
+    });
+  } catch (e) {
+    next(e);
   }
 });
 

@@ -24,7 +24,10 @@
       <div style="display: flex; flex-direction: column; gap: 0.5rem;">
         <% folders.forEach(f => { %>
         <div style="display: flex; gap: 1rem;">
-          <label for="<%= f.id %>"><%= f.name %></label>
+          <span class="span-folder" style="cursor: pointer;" aria-label="Click to modify the folder named <%= f.name %>">
+            ✏️
+          </span>
+          <label data-id="<%= f.id %>" class="folder-label" for="<%= f.id %>"><%= f.name %></label>
           <input type="checkbox" name="folders" value="<%= f.id %>" id="<%= f.id %>">
           <a href="/folder/<%= f.id %>">🔍</a>
           <button type="button" class="delete" data-id="<%= f.id %>">❌</button>
@@ -69,21 +72,58 @@
       div.innerHTML += `<input type="file" name="file${count}" id="file${count++}">`
     })
     const deleteBtn = document.querySelectorAll(".delete")
-    console.log(deleteBtn)
 
     deleteBtn.forEach(btn => {
       btn.addEventListener("click", async () => {
         const folderId = btn.dataset.id;
         if (!confirm("Are you sure?")) return;
 
-        const res = await fetch(`/folders/${folderId}`, {
+        fetch(`/folders/${folderId}`, {
             method: "DELETE"
           }).then(() => btn.closest("div").remove())
-          .then(() => window.href.location = "/");
+          .then(() => window.href.location = "/")
+          .catch(err => console.error(err));
+      })
+    })
+
+    const spans = document.querySelectorAll(".span-folder")
+
+    function updateInput(label) {
+      const newValue = label.textContent
+      const id = label.dataset.id;
+      if (newValue === label.dataset.value || newValue == "") {
+        label.textContent = label.dataset.value
+      } else {
+        label.textContent = newValue
+      }
+      fetch(`/update/folder/${id}/`, {
+        method: "PATCH",
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          folderName: newValue
+        })
+      })
+    }
+
+    spans.forEach(span => {
+      const label = span.nextElementSibling
+      span.addEventListener("click", () => {
+        label.contentEditable = true;
+        label.focus()
+        label.dataset.value = label.textContent
+      })
+      label.addEventListener("blur", () => {
+        updateInput(label)
+      })
+      label.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" || e.key === "Escape") {
+          return label.blur()
+        }
       })
     })
   </script>
-
 </body>
 
 </html>
