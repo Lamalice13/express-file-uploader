@@ -145,6 +145,43 @@ app.get("/folder/:id", async (req, res) => {
   });
 });
 
+// delete folder
+app.delete("/folders/:id", async (req, res, next) => {
+  try {
+    const folderId = parseInt(req.params.id);
+    const folder = await prisma.folder.findUnique({
+      where: { id: folderId },
+      include: {
+        files: {
+          include: {
+            folders: true,
+          },
+        },
+      },
+    });
+
+    const filesToDelete = folder.files
+      .filter((file) => file.folders.length === 1)
+      .map((file) => file.id);
+
+    await prisma.$transaction(async (tx) => {
+      if (filesToDelete.length > 0) {
+        await tx.file.deleteMany({
+          where: {
+            id: { in: filesToDelete },
+          },
+        });
+      }
+      await tx.folder.delete({
+        where: { id: folderId },
+      });
+    });
+    res.sendStatus(200);
+  } catch (err) {
+    next(err);
+  }
+});
+
 // Create folder
 app.post("/create/folder", async (req, res, next) => {
   try {
@@ -172,8 +209,3 @@ app.listen(PORT, (e) => {
   if (e) return console.log(e);
   console.log(`Server running on ${PORT}`);
 });
-
-// ROUTE GET FOLDER
-// ADD DELETE CASCADE FOLDER > FILE IN PRISMA SCHEMA
-// ROUTE DELETE FOLDER + ALERT JS
-// QUAND ON AJOUTER UN INPUT LES FICHIERS CHARGÉES SE RESET

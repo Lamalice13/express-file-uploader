@@ -27,6 +27,9 @@
           <label for="<%= f.id %>"><%= f.name %></label>
           <input type="checkbox" name="folders" value="<%= f.id %>" id="<%= f.id %>">
           <a href="/folder/<%= f.id %>">🔍</a>
+          <button type="button" class="delete" data-id="<%= f.id %>">❌</button>
+          <div>
+          </div>
         </div>
         <% }) %>
       </div>
@@ -38,6 +41,8 @@
   </form>
   </fieldset>
   <button form="upload-form" type="submit" style="display: block; margin-top: 2%;">Submit</button>
+
+
 
 
   <% } else { %>
@@ -62,6 +67,20 @@
 
     icon.addEventListener("click", () => {
       div.innerHTML += `<input type="file" name="file${count}" id="file${count++}">`
+    })
+    const deleteBtn = document.querySelectorAll(".delete")
+    console.log(deleteBtn)
+
+    deleteBtn.forEach(btn => {
+      btn.addEventListener("click", async () => {
+        const folderId = btn.dataset.id;
+        if (!confirm("Are you sure?")) return;
+
+        const res = await fetch(`/folders/${folderId}`, {
+            method: "DELETE"
+          }).then(() => btn.closest("div").remove())
+          .then(() => window.href.location = "/");
+      })
     })
   </script>
 

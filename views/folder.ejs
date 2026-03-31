@@ -9,12 +9,13 @@
 
 <body>
   <% if(locals.files) {%>
+  <% files.forEach(file => { %>
   <div>
-    <% files.forEach(file => { %>
-    <p><%= file.name%></p>
-    <p><%= file.bytes %></p>
-    <% }) %>
+    <p><%= "File name: " + file.name%></p>
+    <p><%= file.bytes + " bytes"%></p>
+    <hr>
   </div>
+  <% }) %>
   <% } %>
   <a href="/">Go back</a>
 </body>
