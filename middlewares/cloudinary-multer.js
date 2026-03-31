@@ -8,7 +8,7 @@ const storage = new CloudinaryStorage({
     folder: "file_uploader",
     resource_type: "auto",
     unique_filename: true,
-    use_filename: true,
+    public_id: (req, file) => file.originalname.split(".")[0],
   },
 });
 

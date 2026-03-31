@@ -114,7 +114,7 @@ app
             prisma.file.create({
               data: {
                 bytes: file.size,
-                name: file.filename,
+                name: file.originalname,
                 path: file.path,
                 folders: {
                   connect: folders.map((id) => ({ id: parseInt(id) })),
