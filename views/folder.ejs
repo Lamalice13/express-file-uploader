@@ -13,6 +13,7 @@
   <div>
     <p><%= "File name: " + file.name%></p>
     <p><%= file.bytes + " bytes"%></p>
+    <a href="/download/<%= file.id %>" class="btn">Télécharger</a>
     <hr>
   </div>
   <% }) %>

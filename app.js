@@ -86,7 +86,7 @@ app
     }
   });
 
-// Index
+// render + upload files
 app
   .route("/")
   .get(async (req, res) => {
@@ -107,6 +107,7 @@ app
   .post(uploadMiddleware, async (req, res, next) => {
     const folders = [].concat(req.body.folders);
 
+    console.log(req.files);
     if (req.files.length > 0) {
       try {
         await Promise.all(
@@ -115,6 +116,7 @@ app
               data: {
                 bytes: file.size,
                 name: file.filename,
+                path: file.path,
                 folders: {
                   connect: folders.map((id) => ({ id: parseInt(id) })),
                 },
@@ -143,6 +145,25 @@ app.get("/folder/:id", async (req, res) => {
   res.render("folder", {
     files,
   });
+});
+
+// download folder
+app.get("/download/:id", async (req, res, next) => {
+  try {
+    const { path } = await prisma.file.findUnique({
+      where: { id: parseInt(req.params.id) },
+      select: { path: true },
+    });
+    res.download(`${path}`, (err) => {
+      if (err) {
+        console.error("File download failed:", err);
+      } else {
+        console.log("File downloaded successfully.");
+      }
+    });
+  } catch (e) {
+    next(e);
+  }
 });
 
 // delete folder
