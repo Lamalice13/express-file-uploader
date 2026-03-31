@@ -11,7 +11,7 @@
   <% if(locals.files) {%>
   <% files.forEach(file => { %>
   <div>
-    <p><%= "File name: " + file.name%></p>
+    <p><%= "File name: " + file.original_name%></p>
     <p><%= file.bytes + " bytes"%></p>
     <a href="/download/<%= file.id %>" class="btn">Télécharger</a>
     <hr>

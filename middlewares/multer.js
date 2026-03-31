@@ -15,7 +15,7 @@ const storage = multer.diskStorage({
   },
 });
 const upload = multer({ storage: storage });
-// any(): Accepts all files that comes over the wire
+
 const uploadMiddleware = upload.any();
 
 export default uploadMiddleware;

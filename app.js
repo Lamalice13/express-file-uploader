@@ -7,6 +7,7 @@ import expressSession from "express-session";
 import { PrismaSessionStore } from "@quixo3/prisma-session-store";
 import { prisma } from "./lib/prisma.js";
 import uploadMiddleware from "./middlewares/cloudinary-multer.js";
+import { v2 as cloudinary } from "cloudinary";
 
 const app = express();
 
@@ -86,7 +87,7 @@ app
     }
   });
 
-// get + upload files
+// GET + POST FILES
 app
   .route("/")
   .get(async (req, res) => {
@@ -106,7 +107,7 @@ app
   })
   .post(uploadMiddleware, async (req, res, next) => {
     const folders = [].concat(req.body.folders);
-    console.log(req.files);
+
     if (req.files.length > 0) {
       try {
         await Promise.all(
@@ -114,7 +115,8 @@ app
             prisma.file.create({
               data: {
                 bytes: file.size,
-                name: file.originalname,
+                original_name: file.originalname,
+                public_id: file.filename,
                 path: file.path,
                 folders: {
                   connect: folders.map((id) => ({ id: parseInt(id) })),
@@ -132,7 +134,7 @@ app
     }
   });
 
-// See folder details
+// GET FOLDER DETAILS
 app.get("/folder/:id", async (req, res) => {
   const files = await prisma.file.findMany({
     where: {
@@ -146,7 +148,7 @@ app.get("/folder/:id", async (req, res) => {
   });
 });
 
-// download folder
+// DL FOLDER
 app.get("/download/:id", async (req, res, next) => {
   try {
     const { path } = await prisma.file.findUnique({
@@ -165,10 +167,12 @@ app.get("/download/:id", async (req, res, next) => {
   }
 });
 
-// delete folder
+// DELETE FOLDER ON DB
+// DELETE MATCHING FILES ON CLOUDINARY
 app.delete("/folders/:id", async (req, res, next) => {
   try {
     const folderId = parseInt(req.params.id);
+
     const folder = await prisma.folder.findUnique({
       where: { id: folderId },
       include: {
@@ -180,29 +184,51 @@ app.delete("/folders/:id", async (req, res, next) => {
       },
     });
 
+    if (!folder) return res.sendStatus(404);
+
     const filesToDelete = folder.files
       .filter((file) => file.folders.length === 1)
       .map((file) => file.id);
 
-    await prisma.$transaction(async (tx) => {
-      if (filesToDelete.length > 0) {
-        await tx.file.deleteMany({
-          where: {
-            id: { in: filesToDelete },
-          },
-        });
-      }
-      await tx.folder.delete({
-        where: { id: folderId },
+    if (filesToDelete.length > 0) {
+      const files = await prisma.file.findMany({
+        where: {
+          id: { in: filesToDelete },
+        },
+        select: {
+          original_name: true,
+          public_id: true,
+        },
       });
+
+      await Promise.all(
+        files.map(async (file) => {
+          const isSvg = file.original_name.endsWith(".svg");
+
+          await cloudinary.uploader.destroy(file.public_id, {
+            resource_type: isSvg ? "raw" : "image",
+          });
+        }),
+      );
+
+      await prisma.file.deleteMany({
+        where: {
+          id: { in: filesToDelete },
+        },
+      });
+    }
+
+    await prisma.folder.delete({
+      where: { id: folderId },
     });
+
     res.sendStatus(200);
   } catch (err) {
     next(err);
   }
 });
 
-// Create folder
+// CREATE FOLDER
 app.post("/create/folder", async (req, res, next) => {
   try {
     await prisma.folder.create({
@@ -243,3 +269,5 @@ app.listen(PORT, (e) => {
   if (e) return console.log(e);
   console.log(`Server running on ${PORT}`);
 });
+
+// PACH NAME

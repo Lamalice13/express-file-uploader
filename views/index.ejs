@@ -28,7 +28,7 @@
             ✏️
           </span>
           <label data-id="<%= f.id %>" class="folder-label" for="<%= f.id %>"><%= f.name %></label>
-          <input type="checkbox" name="folders" value="<%= f.id %>" id="<%= f.id %>">
+          <input type="checkbox" name="folders" value="<%= f.id %>" id="<%= f.id %>" checked>
           <a href="/folder/<%= f.id %>">🔍</a>
           <button type="button" class="delete" data-id="<%= f.id %>">❌</button>
           <div>
@@ -68,61 +68,71 @@
     const div = document.getElementById("inputs");
     let count = 2;
 
-    icon.addEventListener("click", () => {
-      div.innerHTML += `<input type="file" name="file${count}" id="file${count++}">`
-    })
-    const deleteBtn = document.querySelectorAll(".delete")
+    if (icon) {
 
-    deleteBtn.forEach(btn => {
-      btn.addEventListener("click", async () => {
-        const folderId = btn.dataset.id;
-        if (!confirm("Are you sure?")) return;
-
-        fetch(`/folders/${folderId}`, {
-            method: "DELETE"
-          }).then(() => btn.closest("div").remove())
-          .then(() => window.href.location = "/")
-          .catch(err => console.error(err));
+      icon.addEventListener("click", () => {
+        div.innerHTML += `<input type="file" name="file${count}" id="file${count++}">`
       })
-    })
+      const deleteBtn = document.querySelectorAll(".delete")
 
+      deleteBtn.forEach(btn => {
+        btn.addEventListener("click", async () => {
+          const folderId = btn.dataset.id;
+          if (!confirm("Are you sure?")) return;
+
+          try {
+            const res = await fetch(`/folders/${folderId}`, {
+              method: "DELETE",
+            });
+
+            if (!res.ok) throw new Error("Delete failed");
+
+            window.location.href = "/";
+          } catch (err) {
+            console.error(err);
+          }
+        })
+      })
+
+    }
     const spans = document.querySelectorAll(".span-folder")
-
-    function updateInput(label) {
-      const newValue = label.textContent
-      const id = label.dataset.id;
-      if (newValue === label.dataset.value || newValue == "") {
-        label.textContent = label.dataset.value
-      } else {
-        label.textContent = newValue
+    if (spans) {
+      function updateInput(label) {
+        const newValue = label.textContent
+        const id = label.dataset.id;
+        if (newValue === label.dataset.value || newValue == "") {
+          label.textContent = label.dataset.value
+        } else {
+          label.textContent = newValue
+        }
+        fetch(`/update/folder/${id}/`, {
+          method: "PATCH",
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            folderName: newValue
+          })
+        })
       }
-      fetch(`/update/folder/${id}/`, {
-        method: "PATCH",
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          folderName: newValue
+
+      spans.forEach(span => {
+        const label = span.nextElementSibling
+        span.addEventListener("click", () => {
+          label.contentEditable = true;
+          label.focus()
+          label.dataset.value = label.textContent
+        })
+        label.addEventListener("blur", () => {
+          updateInput(label)
+        })
+        label.addEventListener("keydown", (e) => {
+          if (e.key === "Enter" || e.key === "Escape") {
+            return label.blur()
+          }
         })
       })
     }
-
-    spans.forEach(span => {
-      const label = span.nextElementSibling
-      span.addEventListener("click", () => {
-        label.contentEditable = true;
-        label.focus()
-        label.dataset.value = label.textContent
-      })
-      label.addEventListener("blur", () => {
-        updateInput(label)
-      })
-      label.addEventListener("keydown", (e) => {
-        if (e.key === "Enter" || e.key === "Escape") {
-          return label.blur()
-        }
-      })
-    })
   </script>
 </body>
 

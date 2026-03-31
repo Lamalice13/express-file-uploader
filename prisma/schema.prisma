@@ -27,17 +27,18 @@ model User {
 
 model Folder {
   id     Int    @id @default(autoincrement())
-  name   String @unique
+  name   String
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId Int
   files  File[]
 }
 
 model File {
-  id       Int      @id @default(autoincrement())
-  name     String   @unique
-  bytes    Int
-  uploadAt DateTime @default(dbgenerated("NOW()"))
-  path     String
-  folders  Folder[]
+  id            Int      @id @default(autoincrement())
+  original_name String   @unique
+  public_id     String
+  bytes         Int
+  uploadAt      DateTime @default(dbgenerated("NOW()"))
+  path          String
+  folders       Folder[]
 }
