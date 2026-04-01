@@ -4,21 +4,27 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/pages/folder.css">
+
   <title>Folder</title>
 </head>
 
 <body>
-  <% if(locals.files) {%>
+  <% if(locals.files && locals.files.length > 0) {%>
   <% files.forEach(file => { %>
-  <div>
-    <p><%= "File name: " + file.original_name%></p>
-    <p><%= file.bytes + " bytes"%></p>
-    <a href="/download/<%= file.id %>" class="btn">Télécharger</a>
-    <hr>
+  <div class="file-group">
+    <div class="file-card">
+      <p class="file-name"><%= file.original_name %></p>
+      <p><%= file.bytes + " bytes"%></p>
+      <a href="/download/<%= file.id %>" class="btn">Télécharger</a>
+    </div>
   </div>
   <% }) %>
+  <% } else { %>
+  <h1 class="no-file">You have no files in this folder! :(</h1>
   <% } %>
-  <a href="/">Go back</a>
+  <a class="go-back" href="/">Go back</a>
 </body>
 
 </html>

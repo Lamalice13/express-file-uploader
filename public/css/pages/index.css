@@ -1,0 +1,62 @@
+h1 {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.inputs-file {
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  width: fit-content;
+  margin: 0 auto;
+  margin-top: 25px;
+}
+
+.input-file-group {
+  display: flex;
+}
+
+input[type="file"]::file-selector-button {
+  cursor: pointer;
+}
+
+.folders {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.folder-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.span-folder {
+  cursor: pointer;
+}
+
+.submit {
+  display: block;
+  margin: 0 auto;
+  font-size: 1.2rem;
+}
+
+form.add-folder {
+  margin-top: 10px;
+}
+
+label[contenteditable="true"] {
+  display: inline-block;
+  width: 150px;
+  max-width: 250px;
+  padding: 5px;
+}
+
+.folder-label {
+  width: 150px;
+}
+
+.form-no-folder {
+  text-align: center;
+}

@@ -4,77 +4,110 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/pages/index.css">
   <title>Upload file</title>
 </head>
 
 <body>
-  <h1 style="margin: 0;">Drop your files</h1>
 
   <% if(locals.folders && locals.folders.length > 0) { %>
+  <h1>Drop your files</h1>
 
   <form id="upload-form" action="/" method="post" enctype="multipart/form-data">
-    <br>
-    <img src="/icons/plus.svg" id="plus-icon" alt="plus" width="25" style="cursor: pointer;">
-    <div id="inputs" style="display: flex; flex-direction: column; gap: 10px; ">
-      <input type="file" name="file1" id="file" />
-    </div>
-    <br>
-    <fieldset>
-      <legend>Select the folder(s) you want to put your file(s) into</legend>
-      <div style="display: flex; flex-direction: column; gap: 0.5rem;">
-        <% folders.forEach(f => { %>
-        <div style="display: flex; gap: 1rem;">
-          <span class="span-folder" style="cursor: pointer;" aria-label="Click to modify the folder named <%= f.name %>">
-            ✏️
-          </span>
-          <label data-id="<%= f.id %>" class="folder-label" for="<%= f.id %>"><%= f.name %></label>
-          <input type="checkbox" name="folders" value="<%= f.id %>" id="<%= f.id %>" checked>
-          <a href="/folder/<%= f.id %>">🔍</a>
-          <button type="button" class="delete" data-id="<%= f.id %>">❌</button>
-          <div>
-          </div>
-        </div>
-        <% }) %>
+    <div id="inputs-file" class="inputs-file">
+      <div class="input-file-group">
+        <input type="file" name="file1" id="file" />
+        <button type="button" id="btn-add" class="btn-add"></button>
       </div>
+    </div>
+
+
+    <div class="folders">
+      <h2>Folders</h2>
+      <% folders.forEach(f => { %>
+      <div class="folder-group">
+        <input type="checkbox" name="folders" value="<%= f.id %>" id="<%= f.id %>" checked>
+        <label data-id="<%= f.id %>" class="folder-label" for="<%= f.id %>"><%= f.name %></label>
+        <button type="button" class="span-folder" aria-label="Click to modify the folder named <%= f.name %>">
+          ✏️
+        </button>
+        <button type="button"><a href="/folder/<%= f.id %>">🔍</a></button>
+        <button type="button" class="delete" data-id="<%= f.id %>">❌</button>
+      </div>
+      <% }) %>
+    </div>
   </form>
-  <form action="/create/folder" method="post">
+
+  <form action="/create/folder" method="post" class="add-folder">
     <label for="folder_name">Add a folder</label>
-    <input type="text" name="folder_name" id="folder_name">
-    <button type="submit">Create folder</button>
+    <input type="text" name="folder_name" id="folder_name" class="folder-name-input">
+    <button type="submit" id="btn-add-folder" class="btn-add-folder">Create</button>
   </form>
-  </fieldset>
-  <button form="upload-form" type="submit" style="display: block; margin-top: 2%;">Submit</button>
 
-
-
+  <button form="upload-form" type="submit" class="submit">Submit</button>
 
   <% } else { %>
-  <p>You'll need first to create a folder!</p>
-  <form action="/create/folder" method="post">
+  <h1>You'll need first to create a folder!</h1>
+  <form action="/create/folder" method="post" class="form-no-folder">
     <label for="folder_name">Folder's name</label>
     <input type="text" name="folder_name" id="folder_name">
-    <button type="submit">Create folder</button>
+    <button type="submit">Create</button>
   </form>
   <% } %>
 
-  <style>
-    input[type="file"]::file-selector-button {
-      cursor: pointer;
-    }
-  </style>
+
 
   <script>
-    const icon = document.getElementById("plus-icon");
     const div = document.getElementById("inputs");
-    let count = 2;
 
-    if (icon) {
+    const bigDiv = document.getElementById("inputs-file")
+    let fileNumber = 2;
+    let btnCountInput = 1
 
-      icon.addEventListener("click", () => {
-        div.innerHTML += `<input type="file" name="file${count}" id="file${count++}">`
+    function createAddBtn() {
+      const btn = document.createElement("button")
+      btn.type = "button";
+      btn.id = "btn-add";
+      btn.className = "btn-add";
+      btn.textContent = "Add another file";
+
+      btn.addEventListener("click", () => {
+        btnCountInput++
+
+        const div = document.createElement("div")
+        div.className = "input-file-group"
+
+        const input = document.createElement("input");
+        input.name = `file${fileNumber}`
+        input.type = "file"
+        input.id = `file${fileNumber++}`;
+
+        div.appendChild(input);
+
+        if (btnCountInput < 4) {
+          const newBtn = createAddBtn()
+          div.appendChild(newBtn)
+          btn.remove();
+        } else {
+          btn.style.visibility = "hidden"
+        }
+        bigDiv.appendChild(div)
       })
-      const deleteBtn = document.querySelectorAll(".delete")
+      return btn;
+    }
 
+
+    const initialBtnInput = document.getElementById("btn-add")
+    if (initialBtnInput) {
+      initialBtnInput.replaceWith(createAddBtn())
+    }
+
+    const initialBtnFolder = document.getElementById("btn-add-folder")
+
+
+    const deleteBtn = document.querySelectorAll(".delete")
+    if (deleteBtn) {
       deleteBtn.forEach(btn => {
         btn.addEventListener("click", async () => {
           const folderId = btn.dataset.id;
@@ -93,8 +126,10 @@
           }
         })
       })
-
     }
+
+
+
     const spans = document.querySelectorAll(".span-folder")
     if (spans) {
       function updateInput(label) {
@@ -117,10 +152,17 @@
       }
 
       spans.forEach(span => {
-        const label = span.nextElementSibling
+        const label = span.parentElement.querySelector("label")
+
         span.addEventListener("click", () => {
           label.contentEditable = true;
           label.focus()
+
+          const range = document.createRange();
+          range.selectNodeContents(label)
+          const selection = window.getSelection();
+          selection.removeAllRanges();
+          selection.addRange(range);
           label.dataset.value = label.textContent
         })
         label.addEventListener("blur", () => {

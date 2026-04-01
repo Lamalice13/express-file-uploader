@@ -1,0 +1,23 @@
+*,
+::after,
+::before {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  padding: 50px 50px 0 50px;
+}
+
+button,
+a,
+img {
+  cursor: pointer;
+}
+
+button {
+  background: none;
+  border-radius: 20px;
+  padding: 3px 8px;
+}

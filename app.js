@@ -39,8 +39,7 @@ app.use(
 app.use(passport.session());
 
 // ROUTES
-
-// Log in
+// LOG IN
 app
   .route("/login")
   .get((req, res) => {
@@ -54,7 +53,7 @@ app
     });
   });
 
-// Sign up
+// SIGN UP
 app
   .route("/signup")
   .get((req, res) => {
@@ -151,17 +150,14 @@ app.get("/folder/:id", async (req, res) => {
 // DL FOLDER
 app.get("/download/:id", async (req, res, next) => {
   try {
-    const { path } = await prisma.file.findUnique({
-      where: { id: parseInt(req.params.id) },
-      select: { path: true },
+    const file = await prisma.file.findUnique({
+      where: { id: Number(req.params.id) },
+      select: { public_id: true },
     });
-    res.download(`${path}`, (err) => {
-      if (err) {
-        console.error("File download failed:", err);
-      } else {
-        console.log("File downloaded successfully.");
-      }
-    });
+
+    if (!file) return res.sendStatus(404);
+
+    return res.redirect(url);
   } catch (e) {
     next(e);
   }
@@ -270,4 +266,6 @@ app.listen(PORT, (e) => {
   console.log(`Server running on ${PORT}`);
 });
 
-// PACH NAME
+// TO DO:
+// Trouver un moyen de construire l'url cloudinary pour que le user puisse télécharger l'img
+// Validate files
