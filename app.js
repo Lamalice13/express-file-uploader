@@ -152,11 +152,15 @@ app.get("/download/:id", async (req, res, next) => {
   try {
     const file = await prisma.file.findUnique({
       where: { id: Number(req.params.id) },
-      select: { public_id: true },
+      select: { public_id: true, original_name: true },
     });
 
     if (!file) return res.sendStatus(404);
 
+    const resource_type = file.original_name.endsWith(".svg") ? "raw" : "image";
+    const cloudName = process.env.CLOUDINARY_CLOUD_NAME;
+    const url = `https://res.cloudinary.com/${cloudName}/${resource_type}/upload/fl_attachment/${file.public_id}`;
+    console.log(url);
     return res.redirect(url);
   } catch (e) {
     next(e);
