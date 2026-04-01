@@ -6,8 +6,9 @@ import passport from "passport";
 import expressSession from "express-session";
 import { PrismaSessionStore } from "@quixo3/prisma-session-store";
 import { prisma } from "./lib/prisma.js";
-import uploadMiddleware from "./middlewares/cloudinary-multer.js";
+import parser from "./middlewares/cloudinary-multer.js";
 import { v2 as cloudinary } from "cloudinary";
+import path from "node:path";
 
 const app = express();
 
@@ -104,8 +105,9 @@ app
       next(err);
     }
   })
-  .post(uploadMiddleware, async (req, res, next) => {
+  .post(parser.array("file", 4), async (req, res, next) => {
     const folders = [].concat(req.body.folders);
+    console.log(req.files);
 
     if (req.files.length > 0) {
       try {
@@ -159,7 +161,11 @@ app.get("/download/:id", async (req, res, next) => {
 
     const resource_type = file.original_name.endsWith(".svg") ? "raw" : "image";
     const cloudName = process.env.CLOUDINARY_CLOUD_NAME;
-    const url = `https://res.cloudinary.com/${cloudName}/${resource_type}/upload/fl_attachment/${file.public_id}`;
+    // Retrieve file extension
+    const ext = path.extname(file.original_name);
+    // Retrieve last portion after the last "/" with the 'suffix' parameter to remove
+    const filename = path.basename(file.original_name, ext);
+    const url = `https://res.cloudinary.com/${cloudName}/${resource_type}/upload/fl_attachment:${filename}/${file.public_id}`;
     console.log(url);
     return res.redirect(url);
   } catch (e) {

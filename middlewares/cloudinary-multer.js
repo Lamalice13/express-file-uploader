@@ -4,15 +4,20 @@ import multer from "multer";
 
 const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
-  params: {
-    folder: "file_uploader",
-    resource_type: "auto",
-    unique_filename: true,
-    public_id: (req, file) => file.filename,
+  limits: {
+    fileSize: 5 * 1024 * 1024, // 5 MB max par fichier
+  },
+
+  params: async (req, file) => {
+    return {
+      folder: "file_uploader",
+      resource_type: file.mimetype === "image/svg+xml" ? "raw" : "auto",
+      unique_filename: true,
+      public_id: file.filename,
+    };
   },
 });
 
 const parser = multer({ storage: storage });
-const uploadMiddleware = parser.any();
 
-export default uploadMiddleware;
+export default parser;

@@ -17,7 +17,7 @@
   <form id="upload-form" action="/" method="post" enctype="multipart/form-data">
     <div id="inputs-file" class="inputs-file">
       <div class="input-file-group">
-        <input type="file" name="file1" id="file" />
+        <input type="file" name="file" id="file" />
         <button type="button" id="btn-add" class="btn-add"></button>
       </div>
     </div>
@@ -25,6 +25,7 @@
 
     <div class="folders">
       <h2>Folders</h2>
+      <p>Check the folder(s) you want your files submit into</p>
       <% folders.forEach(f => { %>
       <div class="folder-group">
         <input type="checkbox" name="folders" value="<%= f.id %>" id="<%= f.id %>" checked>
@@ -40,7 +41,7 @@
   </form>
 
   <form action="/create/folder" method="post" class="add-folder">
-    <label for="folder_name">Add a folder</label>
+    <label for="folder_name">Folder's name</label>
     <input type="text" name="folder_name" id="folder_name" class="folder-name-input">
     <button type="submit" id="btn-add-folder" class="btn-add-folder">Create</button>
   </form>
@@ -62,7 +63,6 @@
     const div = document.getElementById("inputs");
 
     const bigDiv = document.getElementById("inputs-file")
-    let fileNumber = 2;
     let btnCountInput = 1
 
     function createAddBtn() {
@@ -79,9 +79,8 @@
         div.className = "input-file-group"
 
         const input = document.createElement("input");
-        input.name = `file${fileNumber}`
+        input.name = "file"
         input.type = "file"
-        input.id = `file${fileNumber++}`;
 
         div.appendChild(input);
 

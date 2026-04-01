@@ -35,7 +35,7 @@ model Folder {
 
 model File {
   id            Int      @id @default(autoincrement())
-  original_name String   @unique
+  original_name String
   public_id     String
   bytes         Int
   uploadAt      DateTime @default(dbgenerated("NOW()"))
