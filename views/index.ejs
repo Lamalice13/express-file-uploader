@@ -14,10 +14,10 @@
   <% if(locals.folders && locals.folders.length > 0) { %>
   <h1>Drop your files</h1>
 
-  <form id="upload-form" action="/" method="post" enctype="multipart/form-data">
+  <form id="upload-form" action="/file/create" method="post" enctype="multipart/form-data">
     <div id="inputs-file" class="inputs-file">
       <div class="input-file-group">
-        <input type="file" name="file" id="file" />
+        <input type="file" multiple name="file" id="file" />
         <button type="button" id="btn-add" class="btn-add"></button>
       </div>
     </div>
@@ -40,7 +40,7 @@
     </div>
   </form>
 
-  <form action="/create/folder" method="post" class="add-folder">
+  <form action="/folder/create" method="post" class="add-folder">
     <label for="folder_name">Folder's name</label>
     <input type="text" name="folder_name" id="folder_name" class="folder-name-input">
     <button type="submit" id="btn-add-folder" class="btn-add-folder">Create</button>
@@ -50,7 +50,7 @@
 
   <% } else { %>
   <h1>You'll need first to create a folder!</h1>
-  <form action="/create/folder" method="post" class="form-no-folder">
+  <form action="/folder/create" method="post" class="form-no-folder">
     <label for="folder_name">Folder's name</label>
     <input type="text" name="folder_name" id="folder_name">
     <button type="submit">Create</button>
@@ -113,7 +113,7 @@
           if (!confirm("Are you sure?")) return;
 
           try {
-            const res = await fetch(`/folders/${folderId}`, {
+            const res = await fetch(`/folder/${folderId}`, {
               method: "DELETE",
             });
 
@@ -139,7 +139,7 @@
         } else {
           label.textContent = newValue
         }
-        fetch(`/update/folder/${id}/`, {
+        fetch(`/folder/${id}/`, {
           method: "PATCH",
           headers: {
             'Content-Type': 'application/json'

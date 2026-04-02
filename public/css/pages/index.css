@@ -50,7 +50,6 @@ label[contenteditable="true"] {
   display: inline-block;
   width: 150px;
   max-width: 250px;
-  padding: 5px;
 }
 
 .folder-label {

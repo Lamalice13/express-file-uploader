@@ -17,7 +17,7 @@
     <div class="file-card">
       <p class="file-name"><%= file.original_name %></p>
       <p><%= file.bytes + " bytes"%></p>
-      <a href="/download/<%= file.id %>" class="btn">Télécharger</a>
+      <a href="/file/<%= file.id %>/download" class="btn">Télécharger</a>
     </div>
   </div>
   <% }) %>
