@@ -5,7 +5,7 @@ export async function fileFilter(req, file, cb) {
   const ALLOWED = ["image/jpeg", "image/png", "image/webp"];
 
   try {
-    // Convert file.stream Readable Stream object to a Web Readable Stream
+    // Convert Readable Stream object to a Web Readable Stream
     const stream = Readable.toWeb(req);
     // Detect the file type of a web ReadableStream
     const fileType = await fileTypeFromStream(stream);

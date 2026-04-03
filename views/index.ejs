@@ -121,6 +121,25 @@
         })
       })
     }
+
+    const inputFiles = document.getElementById("input-files")
+    const ALLOWED = ["image/jpeg", "image/png", "image/webp"];
+
+    inputFiles.addEventListener("change", () => {
+      const files = inputFiles.files
+
+      if (files) {
+        for (const file of files) {
+          const {
+            type
+          } = file
+          console.log(type)
+          if (!ALLOWED.includes(type)) {
+            console.log("Not allowed")
+          }
+        }
+      }
+    })
   </script>
 </body>
 
