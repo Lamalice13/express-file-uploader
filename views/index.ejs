@@ -123,22 +123,20 @@
     }
 
     const inputFiles = document.getElementById("input-files")
+    const dataTransfer = new DataTransfer();
     const ALLOWED = ["image/jpeg", "image/png", "image/webp"];
 
     inputFiles.addEventListener("change", () => {
-      const files = inputFiles.files
-
-      if (files) {
-        for (const file of files) {
-          const {
-            type
-          } = file
-          console.log(type)
-          if (!ALLOWED.includes(type)) {
-            console.log("Not allowed")
-          }
+      for (const file of dataTransfer.files) {
+        dataTransfer.items.add(file);
+        const {
+          type
+        } = file
+        if (!ALLOWED.includes(type)) {
+          return console.error('Wrong type of file!')
         }
       }
+      return inputFiles.files = dataTransfer.files;
     })
   </script>
 </body>
