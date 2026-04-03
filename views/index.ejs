@@ -15,7 +15,9 @@
   <h1>Drop your files</h1>
 
   <form id="upload-form" action="/file/create" method="post" enctype="multipart/form-data">
-    <input type="file" multiple name="file" id="input-files" />
+    <input type="file" multiple name="file" id="input-files" style="display: none;" />
+    <button type="button" id="input-files-btn">Click to add files</button>
+    <ul id="files-list" aria-live="polite"></ul>
 
     <div class="folders">
       <h2>Folders</h2>
@@ -122,22 +124,36 @@
       })
     }
 
+
+    const inputFilesBtn = document.getElementById("input-files-btn")
+    const filesUl = document.getElementById("files-list")
     const inputFiles = document.getElementById("input-files")
     const dataTransfer = new DataTransfer();
     const ALLOWED = ["image/jpeg", "image/png", "image/webp"];
 
+    function addFileList(file) {
+      const li = document.createElement("li")
+      li.textContent = file.name
+      filesUl.appendChild(li)
+    }
+
     inputFiles.addEventListener("change", () => {
-      for (const file of dataTransfer.files) {
-        dataTransfer.items.add(file);
+      for (const file of inputFiles.files) {
         const {
           type
         } = file
         if (!ALLOWED.includes(type)) {
-          return console.error('Wrong type of file!')
+          console.error('Wrong type of file!')
+          continue
+        } else {
+          dataTransfer.items.add(file);
+          addFileList(file)
         }
+        inputFiles.files = dataTransfer.files;
       }
-      return inputFiles.files = dataTransfer.files;
     })
+
+    inputFilesBtn.addEventListener("click", () => inputFiles.click());
   </script>
 </body>
 
