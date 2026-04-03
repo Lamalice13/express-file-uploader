@@ -2,8 +2,9 @@ import { prisma } from "../lib/prisma.js";
 import path from "node:path";
 
 export async function postFile(req, res, next) {
-  const folders = [].concat(req.body.folders);
+  console.log(req.files);
 
+  const folders = [].concat(req.body.folders);
   if (req.files.length > 0) {
     try {
       await Promise.all(
@@ -13,6 +14,7 @@ export async function postFile(req, res, next) {
               bytes: file.size,
               original_name: file.originalname,
               public_id: file.filename,
+              // file_type: ADD FILE TYPE ,
               path: file.path,
               folders: {
                 connect: folders.map((id) => ({ id: parseInt(id) })),

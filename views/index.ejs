@@ -15,13 +15,7 @@
   <h1>Drop your files</h1>
 
   <form id="upload-form" action="/file/create" method="post" enctype="multipart/form-data">
-    <div id="inputs-file" class="inputs-file">
-      <div class="input-file-group">
-        <input type="file" multiple name="file" id="file" />
-        <button type="button" id="btn-add" class="btn-add"></button>
-      </div>
-    </div>
-
+    <input type="file" multiple name="file" id="input-files" />
 
     <div class="folders">
       <h2>Folders</h2>
@@ -60,51 +54,6 @@
 
 
   <script>
-    const div = document.getElementById("inputs");
-
-    const bigDiv = document.getElementById("inputs-file")
-    let btnCountInput = 1
-
-    function createAddBtn() {
-      const btn = document.createElement("button")
-      btn.type = "button";
-      btn.id = "btn-add";
-      btn.className = "btn-add";
-      btn.textContent = "Add another file";
-
-      btn.addEventListener("click", () => {
-        btnCountInput++
-
-        const div = document.createElement("div")
-        div.className = "input-file-group"
-
-        const input = document.createElement("input");
-        input.name = "file"
-        input.type = "file"
-
-        div.appendChild(input);
-
-        if (btnCountInput < 4) {
-          const newBtn = createAddBtn()
-          div.appendChild(newBtn)
-          btn.remove();
-        } else {
-          btn.style.visibility = "hidden"
-        }
-        bigDiv.appendChild(div)
-      })
-      return btn;
-    }
-
-
-    const initialBtnInput = document.getElementById("btn-add")
-    if (initialBtnInput) {
-      initialBtnInput.replaceWith(createAddBtn())
-    }
-
-    const initialBtnFolder = document.getElementById("btn-add-folder")
-
-
     const deleteBtn = document.querySelectorAll(".delete")
     if (deleteBtn) {
       deleteBtn.forEach(btn => {
@@ -126,8 +75,6 @@
         })
       })
     }
-
-
 
     const spans = document.querySelectorAll(".span-folder")
     if (spans) {
