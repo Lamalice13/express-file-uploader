@@ -3,7 +3,6 @@ import path from "node:path";
 
 export async function postFile(req, res, next) {
   console.log(req.files);
-
   const folders = [].concat(req.body.folders);
   if (req.files.length > 0) {
     try {
@@ -14,7 +13,7 @@ export async function postFile(req, res, next) {
               bytes: file.size,
               original_name: file.originalname,
               public_id: file.filename,
-              // file_type: ADD FILE TYPE ,
+              file_type: file.mimetype,
               path: file.path,
               folders: {
                 connect: folders.map((id) => ({ id: parseInt(id) })),

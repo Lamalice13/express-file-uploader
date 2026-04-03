@@ -1,10 +1,10 @@
 import { Router } from "express";
-import parser from "../middlewares/cloudinary-multer.js";
 import { postFile, downloadFile } from "../controllers/fileController.js";
+import { multerError } from "../middlewares/multer-error.js";
 
 const fileRouter = Router();
 
-fileRouter.post("/create", parser.array("file", 4), postFile);
+fileRouter.post("/create", multerError, postFile);
 fileRouter.get("/:id/download", downloadFile);
 
 export default fileRouter;

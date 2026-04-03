@@ -1,7 +1,7 @@
 import { v2 as cloudinary } from "cloudinary";
 import { CloudinaryStorage } from "multer-storage-cloudinary";
+import { fileFilter } from "../middlewares/file-filter.js";
 import multer from "multer";
-import { fileFilter } from "./file-filter.js";
 
 const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
