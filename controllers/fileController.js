@@ -27,7 +27,6 @@ export async function postFile(req, res, next) {
     }
     return res.redirect("/home");
   } else {
-    // PLEASE FACTOR
     return res.send("You need to put a file!");
   }
 }
@@ -41,13 +40,13 @@ export async function downloadFile(req, res, next) {
 
     if (!file) return res.sendStatus(404);
 
-    const resource_type = file.original_name.endsWith(".svg") ? "raw" : "image";
     const cloudName = process.env.CLOUDINARY_CLOUD_NAME;
     // Retrieve file extension
     const ext = path.extname(file.original_name);
     // Retrieve last portion after the last "/" with the 'suffix' parameter to remove
     const filename = path.basename(file.original_name, ext);
-    const url = `https://res.cloudinary.com/${cloudName}/${resource_type}/upload/fl_attachment:${filename}/${file.public_id}`;
+
+    const url = `https://res.cloudinary.com/${cloudName}/image/upload/fl_attachment:${filename}/${file.public_id}`;
     return res.redirect(url);
   } catch (e) {
     next(e);

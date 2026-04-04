@@ -6,12 +6,19 @@ import {
   register,
   logout,
 } from "../controllers/authController.js";
+import {
+  signInValidations,
+  signUnpValidations,
+} from "../middlewares/validations/authValidations.js";
 
 const authRouter = Router();
 
 authRouter.get("/", getLoginPage);
-authRouter.post("/login", login);
+authRouter.post("/login", signInValidations, login);
 authRouter.post("/logout", logout);
-authRouter.route("/signup").get(getRegisterPage).post(register);
+authRouter
+  .route("/signup")
+  .get(getRegisterPage)
+  .post(signUnpValidations, register);
 
 export default authRouter;

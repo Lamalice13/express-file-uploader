@@ -1,6 +1,7 @@
 import passport from "passport";
 import { prisma } from "../lib/prisma.js";
 import bcrypt from "bcryptjs";
+import { validationResult, matchedData } from "express-validator";
 
 export function getLoginPage(req, res) {
   if (req.isAuthenticated()) return res.redirect("/home");
@@ -8,6 +9,12 @@ export function getLoginPage(req, res) {
 }
 
 export async function login(req, res, next) {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.render("login", {
+      errors: errors.array(),
+    });
+  }
   passport.authenticate("local", {
     successRedirect: "/home",
     failureRedirect: "/",
@@ -27,8 +34,17 @@ export function getRegisterPage(req, res) {
 }
 
 export async function register(req, res, next) {
+  const errors = validationResult(req);
+  console.log(errors.array());
+  if (!errors.isEmpty()) {
+    return res.render("signup", {
+      errors: errors.array(),
+    });
+  }
+
   try {
-    const { username, email, password } = req.body;
+    const { username, email, password } = matchedData(req);
+    console.log(matchedData(req));
     const user = await prisma.user.create({
       data: {
         username: username,

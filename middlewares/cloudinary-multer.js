@@ -8,7 +8,6 @@ const storage = new CloudinaryStorage({
   params: async (req, file) => {
     return {
       folder: "file_uploader",
-      resource_type: "auto",
       unique_filename: true,
       public_id: file.filename,
     };

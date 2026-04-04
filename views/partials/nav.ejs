@@ -1,12 +1,14 @@
 <header>
   <nav>
     <ul>
-      <% if(isLoggedIn) { %>
-      <li><a href="/home">Drop your file</a></li>
-      <li><a href="/signout">Sign out</a></li>
-      <% } else {%>
-      <li>Sign in</li>
-      <% } %>
+
+      <li>
+        <form action="/logout" method="post">
+          <button type="submit">Log out</button>
+        </form>
+      </li>
+
+
     </ul>
   </nav>
 </header>
