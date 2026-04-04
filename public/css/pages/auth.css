@@ -1,0 +1,56 @@
+.title-form {
+  text-align: center;
+  margin-bottom: 35px;
+}
+
+.auth-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 1rem;
+  width: 50%;
+  margin: 0 auto;
+  border: 1px solid whitesmoke;
+  border-radius: 20px;
+  padding: 40px;
+  box-shadow: 5px 5px 0 10px;
+}
+
+.auth-card > input {
+  font-size: 1.1rem;
+  padding: 5px;
+  padding-left: 10px;
+}
+
+.auth-card > input:focus {
+  outline: 4px solid var(--active);
+}
+
+.btn-container {
+  text-align: center;
+  margin-top: 25px;
+  margin-bottom: 15px;
+}
+
+.btn-container > .btn-submit {
+  width: 25%;
+  margin: 0 auto;
+  padding: 5px;
+  font-size: 1.1rem;
+  transition: all 200ms ease-in-out;
+}
+
+.btn-submit:hover {
+  background-color: var(--active);
+}
+
+.link {
+  text-align: center;
+}
+.link > a {
+  transition: all 200ms ease-in-out;
+}
+
+.link > a:hover {
+  color: var(--active);
+}

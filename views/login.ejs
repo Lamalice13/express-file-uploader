@@ -4,21 +4,27 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Lobby</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/pages/auth.css">
+  <title>Log in</title>
 </head>
 
 <body>
-  <h1>Please log in</h1>
-  <form action="/login" method="post">
+  <h1 class="title-form">Please log in</h1>
+  <form action="/login" method="post" class="auth-card">
     <label for="username">Username</label>
-    <input type="text" name="username" id="username" required />
+    <input type="text" name="username" id="username" required minlength="4" maxlength="10" />
 
     <label for="password">Password</label>
-    <input type="password" name="password" id="password" required />
-    <button type="submit">Submit</button>
+    <input type="password" name="password" id="password" required minlength="4" />
+    <div class="btn-container">
+      <button class="btn-submit" type="submit">Submit</button>
+    </div>
+    <div class="link">
+      <a href="/signup">Click here if you're not registered</a>
+    </div>
   </form>
   <%- include("partials/errors.ejs") %>
-  <a href="/signup">Click here if you're not registered</a>
 </body>
 
 </html>

@@ -1,13 +1,28 @@
+:root {
+  --white-primary: rgb(248, 244, 244);
+  --active: rgb(125, 56, 56);
+}
+
+@font-face {
+  font-family: "MyFont";
+  src: url("/fonts/MirandaSans-VariableFont_wght.ttf") format("truetype");
+  font-style: normal;
+  font-display: swap; /* ← affiche le texte immédiatement avec la font système en attendant */
+}
+
 *,
 ::after,
 ::before {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  color: whitesmoke;
 }
 
 body {
+  font-family: "MyFont", sans-serif;
   padding: 50px 50px 0 50px;
+  background-color: rgb(19, 19, 19);
 }
 
 button,
@@ -16,8 +31,17 @@ img {
   cursor: pointer;
 }
 
+input {
+  color: black;
+  background-color: var(--white-primary);
+  border: none;
+  border-radius: 20px;
+}
+
 button {
   background: none;
   border-radius: 20px;
   padding: 3px 8px;
+  border: none;
+  box-shadow: 2px 2px 0 4px;
 }
