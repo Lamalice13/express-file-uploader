@@ -12,12 +12,12 @@ const strategy = new LocalStrategy(async (username, password, done) => {
       },
     });
     if (!user) {
-      return done(null, { message: "Incorrect username or password" });
+      return done(null, false, { message: "Incorrect username or password" });
     }
-    const isPasswordCorrect = bcrypt.compare(password, user.password);
+    const isPasswordCorrect = await bcrypt.compare(password, user.password);
 
     if (!isPasswordCorrect) {
-      return done(null, { message: "Incorrect username or password" });
+      return done(null, false, { message: "Incorrect username or password" });
     }
 
     return done(null, user);

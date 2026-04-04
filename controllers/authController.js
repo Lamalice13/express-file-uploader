@@ -7,11 +7,18 @@ export function getLoginPage(req, res) {
   return res.render("login");
 }
 
-export async function login(req, res) {
+export async function login(req, res, next) {
   passport.authenticate("local", {
     successRedirect: "/home",
     failureRedirect: "/",
+  })(req, res, next);
+}
+
+export async function logout(req, res, next) {
+  req.logout((err) => {
+    if (err) return next(err);
   });
+  res.redirect("/");
 }
 
 export function getRegisterPage(req, res) {
