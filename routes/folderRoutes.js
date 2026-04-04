@@ -5,14 +5,18 @@ import {
   patchFolder,
   deleteFolder,
 } from "../controllers/folderController.js";
+import {
+  folderPatchValidations,
+  folderCreateValidations,
+} from "../middlewares/validations/folderValidations.js";
 
 const folderRouter = Router();
 
-folderRouter.post("/create", postFoler);
+folderRouter.post("/create", folderCreateValidations, postFoler);
 folderRouter
   .route("/:id")
   .get(getFolderDetails)
-  .patch(patchFolder)
+  .patch(folderPatchValidations, patchFolder)
   .delete(deleteFolder);
 
 export default folderRouter;

@@ -16,9 +16,11 @@
   <h1>Drop your files</h1>
 
   <form id="upload-form" action="/file/create" method="post" enctype="multipart/form-data">
-    <input type="file" multiple name="file" id="input-files" style="display: none;" />
-    <button type="button" id="input-files-btn">Click to add files</button>
-    <ul id="files-list" aria-live="polite"></ul>
+    <div class="files">
+      <input type="file" multiple name="file" id="input-files" style="display: none;" />
+      <button type="button" id="input-files-btn">Click to add files</button>
+      <ul id="files-list" aria-live="polite"></ul>
+    </div>
 
     <div class="folders">
       <h2>Folders</h2>
@@ -27,11 +29,12 @@
       <div class="folder-group">
         <input type="checkbox" name="folders" value="<%= f.id %>" id="<%= f.id %>" checked>
         <label data-id="<%= f.id %>" class="folder-label" for="<%= f.id %>"><%= f.name %></label>
-        <button type="button" class="span-folder" aria-label="Click to modify the folder named <%= f.name %>">
+        <button type="button" class="span-folder" aria-label="Click to modify the folder <%= f.name %>">
           ✏️
         </button>
-        <button type="button"><a href="/folder/<%= f.id %>">🔍</a></button>
-        <button type="button" class="delete" data-id="<%= f.id %>">❌</button>
+        <button type="button" aria-label="Click to see folder details <%= f.name %>"><a href="/folder/<%= f.id %>">🔍</a></button>
+        <button type="button" class="delete" data-id="<%= f.id %>" aria-label="Click to delete folder <%= f.name %>">❌</button>
+        <div id="folder-msg-<%= f.id %>"></div>
       </div>
       <% }) %>
     </div>
@@ -42,6 +45,7 @@
     <input type="text" name="folder_name" id="folder_name" class="folder-name-input">
     <button type="submit" id="btn-add-folder" class="btn-add-folder">Create</button>
   </form>
+  <%- include("partials/errors.ejs") %>
 
   <button form="upload-form" type="submit" class="submit">Submit</button>
 
@@ -71,7 +75,7 @@
 
             if (!res.ok) throw new Error("Delete failed");
 
-            window.location.href = "/";
+            window.location.href = "/home";
           } catch (err) {
             console.error(err);
           }
@@ -80,24 +84,34 @@
     }
 
     const spans = document.querySelectorAll(".span-folder")
+
     if (spans) {
-      function updateInput(label) {
+      async function updateInput(label) {
         const newValue = label.textContent
         const id = label.dataset.id;
         if (newValue === label.dataset.value || newValue == "") {
           label.textContent = label.dataset.value
         } else {
-          label.textContent = newValue
+          try {
+            const res = await fetch(`/folder/${id}/`, {
+              method: "PATCH",
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({
+                folderName: newValue
+              })
+            })
+            label.textContent = newValue
+            const data = await res.json()
+            const p = document.createElement("p")
+            const folderMsgContainer = document.getElementById(`folder-msg-${id}`)
+            p.textContent = !res.ok ? data.errors[0].msg : data.msg
+            folderMsgContainer.replaceChildren(p)
+          } catch (e) {
+            throw new Error(e)
+          }
         }
-        fetch(`/folder/${id}/`, {
-          method: "PATCH",
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            folderName: newValue
-          })
-        })
       }
 
       spans.forEach(span => {

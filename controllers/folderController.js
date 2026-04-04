@@ -1,11 +1,24 @@
+import { matchedData, validationResult } from "express-validator";
 import { prisma } from "../lib/prisma.js";
 import { v2 as cloudinary } from "cloudinary";
 
 export async function postFoler(req, res, next) {
+  const errors = validationResult(req);
+  const folders = await prisma.folder.findMany({
+    where: { userId: req.user.id },
+  });
+  if (!errors.isEmpty()) {
+    return res.render("index", {
+      errors: errors.array(),
+      folders,
+    });
+  }
   try {
+    const { folder_name } = matchedData(req);
+
     await prisma.folder.create({
       data: {
-        name: req.body.folder_name,
+        name: folder_name,
         userId: req.user.id,
       },
     });
@@ -90,13 +103,23 @@ export async function deleteFolder(req, res, next) {
 }
 
 export async function patchFolder(req, res, next) {
+  const errors = validationResult(req);
+
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ success: false, errors: errors.array() });
+  }
+
   try {
+    const { folderName } = matchedData(req);
     await prisma.folder.update({
       where: { id: parseInt(req.params.id) },
       data: {
-        name: req.body.folderName,
+        name: folderName,
       },
     });
+    return res
+      .status(200)
+      .json({ success: true, msg: "Folder successfully updated!" });
   } catch (e) {
     next(e);
   }
