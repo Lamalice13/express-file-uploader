@@ -10,6 +10,7 @@ export async function getHome(req, res, next) {
     });
     return res.render("index", {
       folders,
+      isLoggedIn: true,
     });
   } catch (err) {
     next(err);

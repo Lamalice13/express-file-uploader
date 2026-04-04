@@ -1,0 +1,12 @@
+<header>
+  <nav>
+    <ul>
+      <% if(isLoggedIn) { %>
+      <li><a href="/home">Drop your file</a></li>
+      <li><a href="/signout">Sign out</a></li>
+      <% } else {%>
+      <li>Sign in</li>
+      <% } %>
+    </ul>
+  </nav>
+</header>
