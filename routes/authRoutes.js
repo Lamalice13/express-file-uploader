@@ -8,7 +8,7 @@ import {
 } from "../controllers/authController.js";
 import {
   signInValidations,
-  signUnpValidations,
+  signUpValidations,
 } from "../middlewares/validations/authValidations.js";
 
 const authRouter = Router();
@@ -19,6 +19,6 @@ authRouter.post("/logout", logout);
 authRouter
   .route("/signup")
   .get(getRegisterPage)
-  .post(signUnpValidations, register);
+  .post(signUpValidations, register);
 
 export default authRouter;
