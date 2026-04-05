@@ -10,9 +10,13 @@ export function getLoginPage(req, res) {
 
 export async function login(req, res, next) {
   const errors = validationResult(req);
+  const formattedErrors = errors.array().map((e) => ({
+    [e.path]: e.msg,
+  }));
+  console.log(formattedErrors);
   if (!errors.isEmpty()) {
     return res.render("login", {
-      errors: errors.array(),
+      errors: formattedErrors,
     });
   }
   passport.authenticate("local", {
@@ -35,10 +39,12 @@ export function getRegisterPage(req, res) {
 
 export async function register(req, res, next) {
   const errors = validationResult(req);
-  console.log(errors.array());
+  const formattedErrors = errors.array().map((e) => ({
+    [e.path]: e.msg,
+  }));
   if (!errors.isEmpty()) {
     return res.render("signup", {
-      errors: errors.array(),
+      errors: formattedErrors,
     });
   }
 

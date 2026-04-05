@@ -54,3 +54,8 @@
 .link > a:hover {
   color: var(--active);
 }
+
+p.msg-error {
+  color: red;
+  font-style: italic;
+}

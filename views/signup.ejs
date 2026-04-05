@@ -16,15 +16,19 @@
     <form action="/signup" method="post" class="auth-card">
       <label for="username">Username</label>
       <input type="text" name="username" id="username" required minlength="4" maxlength="10" />
+      <%- include("partials/errors.ejs", {field: "username"}) %>
 
       <label for="email">Email</label>
       <input type="email" name="email" id="email" required />
+      <%- include("partials/errors.ejs", {field: "email"}) %>
 
       <label for="password">Password</label>
       <input type="password" name="password" id="password" required minlength="4" />
+      <%- include("partials/errors.ejs", {field: "password"}) %>
 
       <label for="confirm_password">Confirm password</label>
       <input type="password" name="confirm_password" id="confirm_password" required minlength="4">
+      <%- include("partials/errors.ejs", {field: "confirm_password"}) %>
       <div class="btn-container">
         <button class="btn-submit" type="submit">Submit</button>
       </div>
@@ -32,10 +36,6 @@
         <a href="/">If you're already register, click here</a>
       </div>
     </form>
-
-    <div class="errors-container">
-      <%- include("partials/errors.ejs") %>
-    </div>
   </div>
 </body>
 
