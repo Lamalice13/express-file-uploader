@@ -62,71 +62,83 @@
 
   <script>
     const deleteBtn = document.querySelectorAll(".delete")
+    const spans = document.querySelectorAll(".span-folder")
+    const inputFilesBtn = document.getElementById("input-files-btn")
+    const filesUl = document.getElementById("files-list")
+    const inputFiles = document.getElementById("input-files")
+    const dataTransfer = new DataTransfer();
+    const ALLOWED = ["image/jpeg", "image/png", "image/webp"];
+
+    async function deleteFolder(btn) {
+      const folderId = btn.dataset.id;
+      if (!confirm("Are you sure?")) return;
+
+      try {
+        const res = await fetch(`/folder/${folderId}`, {
+          method: "DELETE",
+        });
+
+        if (!res.ok) throw new Error("Delete failed");
+        window.location.href = "/home";
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
     if (deleteBtn) {
       deleteBtn.forEach(btn => {
-        btn.addEventListener("click", async () => {
-          const folderId = btn.dataset.id;
-          if (!confirm("Are you sure?")) return;
-
-          try {
-            const res = await fetch(`/folder/${folderId}`, {
-              method: "DELETE",
-            });
-
-            if (!res.ok) throw new Error("Delete failed");
-
-            window.location.href = "/home";
-          } catch (err) {
-            console.error(err);
-          }
+        btn.addEventListener("click", () => {
+          deleteFolder(btn)
         })
       })
     }
 
-    const spans = document.querySelectorAll(".span-folder")
-
-    if (spans) {
-      async function updateInput(label) {
-        const newValue = label.textContent
-        const id = label.dataset.id;
-        if (newValue === label.dataset.value || newValue == "") {
-          label.textContent = label.dataset.value
-        } else {
-          try {
-            const res = await fetch(`/folder/${id}/`, {
-              method: "PATCH",
-              headers: {
-                'Content-Type': 'application/json'
-              },
-              body: JSON.stringify({
-                folderName: newValue
-              })
+    async function updateInput(label) {
+      const newValue = label.textContent
+      const id = label.dataset.id;
+      if (newValue === label.dataset.value || newValue == "") {
+        label.textContent = label.dataset.value
+      } else {
+        try {
+          const res = await fetch(`/folder/${id}/`, {
+            method: "PATCH",
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              folderName: newValue
             })
-            label.textContent = newValue
-            const data = await res.json()
-            const p = document.createElement("p")
-            const folderMsgContainer = document.getElementById(`folder-msg-${id}`)
-            p.textContent = !res.ok ? data.errors[0].msg : data.msg
-            folderMsgContainer.replaceChildren(p)
-          } catch (e) {
-            throw new Error(e)
-          }
+          })
+          label.textContent = newValue
+          const data = await res.json()
+          const p = document.createElement("p")
+          const folderMsgContainer = document.getElementById(`folder-msg-${id}`)
+          p.textContent = !res.ok ? data.errors[0].msg : data.msg
+          folderMsgContainer.replaceChildren(p)
+        } catch (e) {
+          throw new Error(e)
         }
       }
+    }
 
+    function makeLabelEditableFromSpan(label) {
+      label.contentEditable = true;
+      label.focus()
+
+      const range = document.createRange();
+      range.selectNodeContents(label)
+      const selection = window.getSelection();
+      selection.removeAllRanges();
+      selection.addRange(range);
+      label.dataset.value = label.textContent
+    }
+
+    if (spans) {
       spans.forEach(span => {
         const label = span.parentElement.querySelector("label")
 
         span.addEventListener("click", () => {
-          label.contentEditable = true;
-          label.focus()
-
-          const range = document.createRange();
-          range.selectNodeContents(label)
-          const selection = window.getSelection();
-          selection.removeAllRanges();
-          selection.addRange(range);
-          label.dataset.value = label.textContent
+          makeLabelEditableFromSpan(span)
         })
         label.addEventListener("blur", () => {
           updateInput(label)
@@ -139,20 +151,7 @@
       })
     }
 
-
-    const inputFilesBtn = document.getElementById("input-files-btn")
-    const filesUl = document.getElementById("files-list")
-    const inputFiles = document.getElementById("input-files")
-    const dataTransfer = new DataTransfer();
-    const ALLOWED = ["image/jpeg", "image/png", "image/webp"];
-
-    function addFileList(file) {
-      const li = document.createElement("li")
-      li.textContent = file.name
-      filesUl.appendChild(li)
-    }
-
-    inputFiles.addEventListener("change", () => {
+    function addFileList() {
       for (const file of inputFiles.files) {
         const {
           type
@@ -162,13 +161,16 @@
           continue
         } else {
           dataTransfer.items.add(file);
-          addFileList(file)
+          const li = document.createElement("li")
+          li.textContent = file.name
+          filesUl.appendChild(li)
         }
         inputFiles.files = dataTransfer.files;
       }
-    })
+    }
 
     inputFilesBtn.addEventListener("click", () => inputFiles.click());
+    inputFiles.addEventListener("change", addFileList)
   </script>
 </body>
 
