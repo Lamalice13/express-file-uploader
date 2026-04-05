@@ -23,6 +23,7 @@ model User {
   username String   @unique
   password String
   folders  Folder[]
+  files    File[]
 }
 
 model Folder {
@@ -39,6 +40,8 @@ model File {
   public_id     String
   file_type     String
   bytes         Int
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId        Int
   uploadAt      DateTime @default(dbgenerated("NOW()"))
   path          String
   folders       Folder[]
