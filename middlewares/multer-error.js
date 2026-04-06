@@ -39,23 +39,17 @@ export function multerError(req, res, next) {
       }
 
       // Check if file exists
-      if (!req.files) {
-        return res.status(400).json({
-          success: false,
-          error: "NO_FILE",
-          message: "No file was uploaded",
-        });
+      if (!req.files || req.files.length === 0) {
+        return res.redirect(
+          `/home?error=${encodeURIComponent("No file was uploaded")}`,
+        );
       }
 
       // Successful upload processing
       next();
     } catch (error) {
       console.error("Upload error:", error);
-      res.status(500).json({
-        success: false,
-        error: "SERVER_ERROR",
-        message: "Internal server error",
-      });
+      next(error);
     }
   });
 }

@@ -1,61 +1,108 @@
-h1 {
-  text-align: center;
-  margin-bottom: 40px;
-}
-
-.inputs-file {
-  display: flex;
-  flex-direction: column;
-  align-items: start;
-  width: fit-content;
+.home-wrapper {
+  width: 50%;
+  min-width: 400px;
+  max-width: 550px;
   margin: 0 auto;
-  margin-top: 25px;
-}
-
-.input-file-group {
-  display: flex;
-}
-
-input[type="file"]::file-selector-button {
-  cursor: pointer;
-}
-
-.folders {
+  padding: 35px;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  align-items: center;
+  gap: 1.5rem;
+  text-align: center;
+  border: 1px solid whitesmoke;
+}
+
+.files-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  width: 70%;
+  margin: 0 auto;
+}
+
+.files-wrapper > button {
+  padding: 10px 0;
+  width: 50%;
+}
+
+.separator {
+  border: none;
+  border-top: 1px solid #e0e0e0;
+  margin-bottom: 1rem;
+  width: 80%;
+}
+
+.folders-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.folder-wrapper {
+  display: flex;
+  flex-direction: column;
 }
 
 .folder-group {
-  display: flex;
-  align-items: center;
-  gap: 10px;
+  display: grid;
+  grid-template-columns: auto 100px auto auto auto;
+  justify-content: center;
+  gap: 1rem;
 }
 
-.span-folder {
-  cursor: pointer;
-}
-
-.submit {
-  display: block;
-  margin: 0 auto;
-  font-size: 1.2rem;
+.folder-group > .folder-label {
+  overflow: hidden;
+  white-space: nowrap;
 }
 
 form.add-folder {
+  display: flex;
+  gap: 1rem;
+  margin-top: 0.8rem;
+}
+
+.home-wrapper > .submit {
+  font-size: 1.1rem;
+  padding: 5px 20px;
+}
+
+.home-wrapper > .submit:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.msg-wrapper {
+  margin: 0.8rem auto;
+}
+p.msg-error {
+  color: red;
+  font-style: italic;
+}
+p.msg-success {
+  color: green;
+  font-style: italic;
+}
+
+p.user-advice {
+  margin-bottom: 1rem;
+}
+
+.files-list {
+  gap: 0.8rem;
+}
+
+.files-list > li {
   margin-top: 10px;
+  font-style: italic;
+  font-size: 0.6rem;
 }
 
-label[contenteditable="true"] {
-  display: inline-block;
-  width: 150px;
-  max-width: 250px;
+.sub-title {
+  font-style: italic;
+  margin-top: 0.8rem;
+  margin-bottom: 0.8rem;
 }
-
-.folder-label {
-  width: 150px;
-}
-
-.form-no-folder {
-  text-align: center;
+.upload-form > .separator {
+  width: 100%;
 }

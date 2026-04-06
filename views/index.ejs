@@ -13,41 +13,66 @@
   <%- include("partials/nav.ejs")  %>
 
   <% if(locals.folders && locals.folders.length > 0) { %>
-  <h1>Drop your files</h1>
-
-  <form id="upload-form" action="/file/create" method="post" enctype="multipart/form-data">
-    <div class="files">
-      <input type="file" multiple name="file" id="input-files" style="display: none;" />
-      <button type="button" id="input-files-btn">Click to add files</button>
-      <ul id="files-list" aria-live="polite"></ul>
+  <div class="home-wrapper">
+    <div>
+      <h1>Drop your files</h1>
+      <p class="sub-title">We accept only png and jpeg files format</p>
     </div>
-
-    <div class="folders">
-      <h2>Folders</h2>
-      <p>Check the folder(s) you want your files submit into</p>
-      <% folders.forEach(f => { %>
-      <div class="folder-group">
-        <input type="checkbox" name="folders" value="<%= f.id %>" id="<%= f.id %>" checked>
-        <label data-id="<%= f.id %>" class="folder-label" for="<%= f.id %>"><%= f.name %></label>
-        <button type="button" class="span-folder" aria-label="Click to modify the folder <%= f.name %>">
-          ✏️
-        </button>
-        <button type="button" aria-label="Click to see folder details <%= f.name %>"><a href="/folder/<%= f.id %>">🔍</a></button>
-        <button type="button" class="delete" data-id="<%= f.id %>" aria-label="Click to delete folder <%= f.name %>">❌</button>
-        <div id="folder-msg-<%= f.id %>"></div>
+    <form id="upload-form" action="/file/create" class="upload-form" method="post" enctype="multipart/form-data">
+      <div class="files-wrapper">
+        <input type="file" multiple name="file" id="input-files" style="display: none;" />
+        <button type="button" id="input-files-btn">Click to add files</button>
+        <ul id="files-list" class="files-list" aria-live="polite"></ul>
       </div>
-      <% }) %>
-    </div>
-  </form>
+      <% if(locals.error) { %>
+      <div class="msg-wrapper">
+        <p class="msg-error"><%= error %></p>
+      </div>
+      <% } %>
 
-  <form action="/folder/create" method="post" class="add-folder">
-    <label for="folder_name">Folder's name</label>
-    <input type="text" name="folder_name" id="folder_name" class="folder-name-input">
-    <button type="submit" id="btn-add-folder" class="btn-add-folder">Create</button>
-  </form>
-  <%- include("partials/errors.ejs") %>
+      <% if(locals.success) { %>
+      <div class="msg-wrapper">
+        <p class="msg-success"><%= success %> </p>
+      </div>
+      <% } %>
 
-  <button form="upload-form" type="submit" class="submit">Submit</button>
+      <div aria-hidden="true" class="separator"></div>
+
+      <div class="folders-wrapper">
+        <h2>Folders</h2>
+        <p class="user-advice">Check the folder(s) you want your files submit into</p>
+
+        <% folders.forEach(f => { %>
+        <div class="folder-wrapper">
+          <div class="folder-group">
+            <input type="checkbox" class="folder-checkbox" name="folders" value="<%= f.id %>" id="<%= f.id %>" checked>
+            <label data-id="<%= f.id %>" class="folder-label" for="<%= f.id %>"><%= f.name %></label>
+            <button type="button" class="span-folder" aria-label="Click to modify the folder <%= f.name %>">
+              ✏️
+            </button>
+            <a href="/folder/<%= f.id %>" aria-label="Click to see folder details <%= f.name %>">🔍</a>
+            <button type="button" class="delete" data-id="<%= f.id %>" aria-label="Click to delete folder <%= f.name %>">❌</button>
+          </div>
+          <div id="folder-msg-<%= f.id %>" class="msg-wrapper"></div>
+        </div>
+        <% }) %>
+      </div>
+    </form>
+
+
+    <form action="/folder/create" method="post" class="add-folder">
+      <label for="folder_name">Folder's name</label>
+      <input type="text" name="folder_name" id="folder_name" class="folder-name-input">
+      <button type="submit" id="btn-add-folder" class="btn-add-folder">Create</button>
+    </form>
+
+
+
+    <div aria-hidden="true" class="separator"></div>
+
+    <button form="upload-form" type="submit" class="submit" disabled="true">Submit</button>
+    <p id="msg-submit-success" class="msg-submit-success"></p>
+  </div>
 
   <% } else { %>
   <h1>You'll need first to create a folder!</h1>
@@ -67,7 +92,10 @@
     const filesUl = document.getElementById("files-list")
     const inputFiles = document.getElementById("input-files")
     const dataTransfer = new DataTransfer();
-    const ALLOWED = ["image/jpeg", "image/png", "image/webp"];
+    const ALLOWED = ["image/jpeg", "image/png"];
+    const btnSubmitSuccess = document.getElementById("msg-submit-success")
+    const foldersCheckbox = document.querySelectorAll(".folder-checkbox")
+    const submitBtn = document.querySelector(".submit")
 
     async function deleteFolder(btn) {
       const folderId = btn.dataset.id;
@@ -78,7 +106,6 @@
           method: "DELETE",
         });
 
-        if (!res.ok) throw new Error("Delete failed");
         window.location.href = "/home";
       } catch (err) {
         console.error(err);
@@ -109,11 +136,21 @@
               folderName: newValue
             })
           })
-          label.textContent = newValue
+
           const data = await res.json()
           const p = document.createElement("p")
           const folderMsgContainer = document.getElementById(`folder-msg-${id}`)
-          p.textContent = !res.ok ? data.errors[0].msg : data.msg
+
+          if (!res.ok) {
+            p.classList.add("msg-error")
+            p.textContent = data.errors[0].msg
+            label.textContent = label.dataset.value
+          } else {
+            p.classList.add("msg-success")
+            p.textContent = data.msg
+            label.dataset.value = newValue
+            label.textContent = newValue
+          }
           folderMsgContainer.replaceChildren(p)
         } catch (e) {
           throw new Error(e)
@@ -121,7 +158,7 @@
       }
     }
 
-    function makeLabelEditableFromSpan(label) {
+    function makeLabelEditable(label) {
       label.contentEditable = true;
       label.focus()
 
@@ -138,10 +175,11 @@
         const label = span.parentElement.querySelector("label")
 
         span.addEventListener("click", () => {
-          makeLabelEditableFromSpan(span)
+          makeLabelEditable(label)
         })
         label.addEventListener("blur", () => {
           updateInput(label)
+          label.contentEditable = "false"
         })
         label.addEventListener("keydown", (e) => {
           if (e.key === "Enter" || e.key === "Escape") {
@@ -151,13 +189,25 @@
       })
     }
 
+
+
+    // If none of the submit btn are checked, unallowed submit upload file 
+    foldersCheckbox.forEach(input => {
+      input.addEventListener("click", () => {
+        const isChecked = [...foldersCheckbox].some(input => input.checked)
+        submitBtn.disabled = !(isChecked && dataTransfer.files.length > 0)
+        console.log(submitBtn.disabled)
+      })
+    })
+
+
     function addFileList() {
       for (const file of inputFiles.files) {
         const {
           type
         } = file
         if (!ALLOWED.includes(type)) {
-          console.error('Wrong type of file!')
+          alert('Wrong type of file!')
           continue
         } else {
           dataTransfer.items.add(file);
@@ -165,8 +215,9 @@
           li.textContent = file.name
           filesUl.appendChild(li)
         }
-        inputFiles.files = dataTransfer.files;
       }
+      submitBtn.disabled = dataTransfer.files.length === 0
+      inputFiles.files = dataTransfer.files;
     }
 
     inputFilesBtn.addEventListener("click", () => inputFiles.click());

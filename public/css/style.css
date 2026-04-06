@@ -31,11 +31,34 @@ img {
   cursor: pointer;
 }
 
+li {
+  list-style: none;
+}
+
 input {
   color: black;
   background-color: var(--white-primary);
   border: none;
   border-radius: 20px;
+  font-size: 1.1rem;
+  padding: 5px;
+  padding-left: 10px;
+}
+
+input:focus {
+  outline: 4px solid var(--active);
+}
+
+input[type="checkbox"]:focus {
+  outline: none;
+}
+
+a {
+  background: none;
+  border-radius: 20px;
+  padding: 3px 8px;
+  border: none;
+  box-shadow: 2px 2px 0 4px;
 }
 
 button {
@@ -44,4 +67,12 @@ button {
   padding: 3px 8px;
   border: none;
   box-shadow: 2px 2px 0 4px;
+}
+
+button:hover {
+  background-color: var(--active);
+}
+
+label {
+  font-size: 1.1rem;
 }

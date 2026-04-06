@@ -12,19 +12,20 @@
 
 <body>
   <% if(locals.files && locals.files.length > 0) {%>
-  <% files.forEach(file => { %>
   <div class="file-group">
+    <% files.forEach(file => { %>
     <div class="file-card">
       <p class="file-name"><%= file.original_name %></p>
       <p><%= file.bytes + " bytes"%></p>
       <a href="/file/<%= file.id %>/download" class="btn">Télécharger</a>
     </div>
+    <% }) %>
   </div>
-  <% }) %>
   <% } else { %>
   <h1 class="no-file">You have no files in this folder! :(</h1>
   <% } %>
-  <a class="go-back" href="/">Go back</a>
+  <a class="btn-last" href="/">Go back</a>
+
 </body>
 
 </html>

@@ -10,6 +10,8 @@ export async function getHome(req, res, next) {
     });
     return res.render("index", {
       folders,
+      error: req.query.error || null,
+      success: req.query.success || null,
     });
   } catch (err) {
     next(err);

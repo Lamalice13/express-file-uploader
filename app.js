@@ -9,7 +9,6 @@ import fileRouter from "./routes/fileRoutes.js";
 import authRouter from "./routes/authRoutes.js";
 import folderRouter from "./routes/folderRoutes.js";
 import homeRouter from "./routes/homeRoutes.js";
-
 const app = express();
 
 // CONFIG
@@ -45,9 +44,21 @@ app.use("/folder", folderRouter);
 app.use("/file", fileRouter);
 
 // ERROR EXPRESS MIDDLEWARE
-app.use((err, req, res, next) => {
+app.use(async (err, req, res, next) => {
   console.error("Express error", err);
-  return res.status(500).send(err);
+  try {
+    const folders = await prisma.folder.findMany({
+      where: {
+        userId: req.user.id,
+      },
+    });
+    return res.status(500).render("index", {
+      error: err.message || "Internal server error",
+      folders,
+    });
+  } catch (err) {
+    next(err);
+  }
 });
 
 // PORT

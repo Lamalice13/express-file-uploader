@@ -2,9 +2,13 @@ import { prisma } from "../lib/prisma.js";
 import path from "node:path";
 
 export async function postFile(req, res, next) {
-  console.log(req.files);
-  const folders = [].concat(req.body.folders);
   if (req.files.length > 0) {
+    const folders = [].concat(req.body.folders);
+    if (folders.length === 0) {
+      return res.redirect(
+        `/home?error=${encodeURIComponent("Please select at least one folder")}`,
+      );
+    }
     try {
       await Promise.all(
         req.files.map((file) =>
@@ -18,6 +22,9 @@ export async function postFile(req, res, next) {
               folders: {
                 connect: folders.map((id) => ({ id: parseInt(id) })),
               },
+              user: {
+                connect: { id: req.user.id },
+              },
             },
           }),
         ),
@@ -25,9 +32,9 @@ export async function postFile(req, res, next) {
     } catch (err) {
       next(err);
     }
-    return res.redirect("/home");
-  } else {
-    return res.send("You need to put a file!");
+    return res.redirect(
+      `/home?success=${encodeURIComponent("File successfully uploaded!")}`,
+    );
   }
 }
 
