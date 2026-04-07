@@ -124,3 +124,26 @@ export async function patchFolder(req, res, next) {
     next(e);
   }
 }
+
+export function getShareForm(req, res, next) {
+  const { id } = req.params;
+  res.render("shareForm", {
+    id,
+  });
+}
+
+export function getShareLink(req, res) {
+  const { link_duration } = req.query;
+  const { id } = req.params;
+
+  console.log(id);
+
+  const duration = link_duration * 24;
+  const date = Date.now();
+
+  const shareLink = `http://localhost:3000/${id}/share/${date}-${duration}`;
+  res.render("shareForm", {
+    shareLink,
+    id,
+  });
+}

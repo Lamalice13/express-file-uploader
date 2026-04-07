@@ -52,6 +52,7 @@
             </button>
             <a href="/folder/<%= f.id %>" aria-label="Click to see folder details <%= f.name %>">🔍</a>
             <button type="button" class="delete" data-id="<%= f.id %>" aria-label="Click to delete folder <%= f.name %>">❌</button>
+            <a href="/folder/<%= f.id %>/share/form" class="btn-share">Share</a>
           </div>
           <div id="folder-msg-<%= f.id %>" class="msg-wrapper"></div>
         </div>

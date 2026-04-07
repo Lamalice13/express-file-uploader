@@ -1,0 +1,21 @@
+.share-form {
+  margin: 0 auto;
+  width: 70%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 25px;
+}
+
+.copy-link > button {
+  display: block;
+  width: 100px;
+  margin: 0 auto;
+  margin-top: 25px;
+}
+
+.copy-link > input {
+  text-align: center;
+  padding: 10px 0;
+}

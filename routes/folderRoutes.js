@@ -4,6 +4,8 @@ import {
   getFolderDetails,
   patchFolder,
   deleteFolder,
+  getShareForm,
+  getShareLink,
 } from "../controllers/folderController.js";
 import {
   folderPatchValidations,
@@ -13,6 +15,8 @@ import {
 const folderRouter = Router();
 
 folderRouter.post("/create", folderCreateValidations, postFoler);
+folderRouter.get("/:id/share/form", getShareForm);
+folderRouter.get("/:id/share", getShareLink);
 folderRouter
   .route("/:id")
   .get(getFolderDetails)

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/pages/shareForm.css">
+  <title>Share folder</title>
+</head>
+
+<body>
+  <div class="share-form">
+
+    <form action="/folder/<%= locals.id %>/share" method="get">
+      <h1 for="duration">Link duration</h1>
+      <label for="1">1 day</label>
+      <input type="radio" name="link_duration" value="1" id="1">
+      <label for="10">10 days</label>
+      <input type="radio" name="link_duration" value="10" id="10">
+      <label for="30">30 days</label>
+      <input type="radio" name="link_duration" value="30" id="30">
+      <button type="submit">Get the link</button>
+    </form>
+    <% if(locals.shareLink){ %>
+    <div class="copy-link">
+      <input type="text" value="<%= shareLink %>" id="share-link" size="<%= shareLink.length %>" readonly>
+      <button onclick="navigator.clipboard.writeText('<%= shareLink %>').then(() => alert('Copied!'))">
+        Copy
+      </button>
+    </div>
+    <% } %>
+  </div>
+</body>
+
+</html>
+
+<!-- https://yourapp.com/share/c758c495-0705-44c6-8bab-6635fd12cf81 -->

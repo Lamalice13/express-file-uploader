@@ -49,11 +49,13 @@ input:focus {
   outline: 4px solid var(--active);
 }
 
-input[type="checkbox"]:focus {
+input[type="checkbox"]:focus,
+input[type="radio"] {
   outline: none;
+  cursor: pointer;
 }
 
-a {
+a:not(.btn-share) {
   background: none;
   border-radius: 20px;
   padding: 3px 8px;
