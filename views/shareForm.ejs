@@ -10,8 +10,8 @@
 </head>
 
 <body>
+  <%- include("partials/nav.ejs")  %>
   <div class="share-form">
-
     <form action="/folder/<%= locals.id %>/share" method="get">
       <h1 for="duration">Link duration</h1>
       <label for="1">1 day</label>
@@ -31,8 +31,7 @@
     </div>
     <% } %>
   </div>
+  <a href="/">Go back</a>
 </body>
 
 </html>
-
-<!-- https://yourapp.com/share/c758c495-0705-44c6-8bab-6635fd12cf81 -->

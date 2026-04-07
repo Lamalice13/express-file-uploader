@@ -6,11 +6,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="/css/style.css">
   <link rel="stylesheet" href="/css/pages/folder.css">
-
   <title>Folder</title>
 </head>
 
 <body>
+  <%- include("partials/nav.ejs")  %>
   <% if(locals.files && locals.files.length > 0) {%>
   <div class="file-group">
     <% files.forEach(file => { %>
